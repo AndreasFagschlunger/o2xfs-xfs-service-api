@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+
 generate_VERSION() {
   VERSION=$(./gradlew -s properties | grep 'version: ' | sed -e 's/version: //')
 }
@@ -56,19 +58,19 @@ git_tag_and_push() {
   fi
 }
 
-if [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$BRANCH" == "master" ]; then
   generate_VERSION
   increment_patch_level
 fi
 
 ./gradlew build
 
-if [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$BRANCH" == "master" ]; then
   git_config
   git_add_commit
   git_tag_and_push
 fi
 
-if [ "$TRAVIS_BRANCH" == "master" ] || [ "$TRAVIS_BRANCH" == "develop" ]; then
+if [ "$BRANCH" == "master" ] || [ "$BRANCH" == "develop" ]; then
   ./gradlew publish
 fi
