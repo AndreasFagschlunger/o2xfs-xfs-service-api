@@ -63,8 +63,6 @@ fi
 
 ./gradlew build
 
-echo $TRAVIS_BRANCH
-
 if [ "$TRAVIS_BRANCH" == "master" ]; then
   git_config
   git_add_commit
